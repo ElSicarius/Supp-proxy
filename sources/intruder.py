@@ -122,6 +122,10 @@ class Intruder():
         req = Request(self.args.url, self.args.data, self.args.headers, self.args.method, payload, self.args.placeholder, self.place)
         return base_payload, payload, self.do_request(req)
     
+    async def prepare_request_and_send_headless(self, payload, base_payload):
+        req = Request(self.args.url, self.args.data, self.args.headers, self.args.method, payload, self.args.placeholder, self.place)
+        return base_payload, payload, await self.do_request_headless(req)
+    
     def do_base_request(self):
         req = Request(self.args.url, self.args.data, self.args.headers, self.args.method, self.args.base_payload, self.args.placeholder, self.place)
         self.base_request = self.do_request(req)
@@ -130,10 +134,50 @@ class Intruder():
 
     def do_request(self, req):
         return self.requests.request_object_handler(req)
+    
+    async def do_request_headless(self, req):
+        return await self.requests.request_object_handler_headless(req)
 
     def start_request(self, payload):
         tampered = self.wordlist.gen_payload(payload)
         base_payload, full_payload, response = self.prepare_request_and_send(tampered, payload)
+       
+                
+        if response is None:
+            log(f"A problem occured while fetching the link, your internet might be broken. param: {base_payload}", type="critical")
+            # Accept response
+            return True, response, base_payload, full_payload
+            
+        
+        # Base request checks
+        if self.args.use_base_request:
+            if self.base_request is not None:
+                identical = self.difflib.is_identical(self.base_request, response, base_payload, self.args.match_headers, self.args.exclude_headers)
+                if identical:
+                    if not self.args.match_base_request:
+                        return False, response, base_payload, full_payload
+                        
+                else:
+                    if self.args.match_base_request:
+                        return False, response, base_payload, full_payload
+        # FILTERS CHECKS
+        if not self.is_status_code_in_specs(response.status_code):
+            # reject response
+            return False, response, base_payload, full_payload
+            
+        if not self.is_response_time_in_specs(response.elapsed.total_seconds()):
+            # reject response
+            return False, response, base_payload, full_payload
+            
+        if not self.is_response_len_specs(len(response.text)):
+            # reject response
+            return False, response, base_payload, full_payload
+            
+        return True, response, base_payload, full_payload
+    
+    async def start_request_headless(self, payload):
+        tampered = self.wordlist.gen_payload(payload)
+        base_payload, full_payload, response = await self.prepare_request_and_send_headless(tampered, payload)
        
                 
         if response is None:

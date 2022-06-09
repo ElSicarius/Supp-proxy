@@ -4,6 +4,7 @@ from shutil import ExecError
 import requests
 import time
 
+from .headless import Web_headless
 from .printing import print, log, Colors, Strings
 
 class Request():
@@ -114,6 +115,7 @@ class Requests():
 
     def __init__(self, method="GET", timeout=60, throttle=0.0, allow_redirects=False, verify_ssl=False, retry=False, headers={}) -> None:
         self.session = requests.Session()
+        self.web = Web_headless(headers, timeout=timeout)
         self.method = method
         self.timeout = timeout
         self.throttle = throttle
@@ -149,6 +151,9 @@ class Requests():
     def request_object_handler(self, req):
         return self.request_handler(req.url, req.data, req.method, req.headers)
     
+    async def request_object_handler_headless(self, req):
+        return await self.request_handler_headless(req.url, req.data, req.method, req.headers)
+    
     def request_handler(self, url, data=None, method=None, headers={}):
         """
         Do a GET or a POST depending on the method set in settings (can be overrite with the method argument)
@@ -159,7 +164,25 @@ class Requests():
             return self.get_(url, data, headers)
         if method == "POST":
             return self.post_(url, data, headers)
-
+    
+    async def request_handler_headless(self, url, data=None, method=None, headers={}):
+        """
+        Do a GET or a POST depending on the method set in settings (can be overrite with the method argument)
+        :returns the requests.response object
+        """
+        method = self.method if not method else method
+        if method == "GET":
+            return await self.get_headless_(url, data, headers)
+        if method == "POST":
+            return self.post_(url, data, headers)
+    
+    async def get_headless_(self, url, data=None, headers={}):
+        self.headers.update({k.lower(): v for k,v in headers.items()})
+        self.web.rewrite_headers(self.headers)
+        browser = await self.web.spawn_browser()
+        page = await self.web.new_page(browser)
+        req = await self.web.page_goto(page, url, headers=self.headers)
+        return req
 
     def get_(self, url, data=None, headers={}):
         """
