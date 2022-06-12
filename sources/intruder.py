@@ -14,7 +14,8 @@ class Intruder():
                                 throttle=args.throttle, 
                                 allow_redirects=args.allow_redirects, 
                                 verify_ssl=args.verify_ssl, 
-                                retry=args.retry)
+                                retry=args.retry,
+                                independant_chrome=args.chrome_port)
         self.futures = set()
         self.fill_statuscode_specs()
         self.fill_time_spent_specs()

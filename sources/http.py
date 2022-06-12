@@ -5,7 +5,7 @@ import requests
 import time
 
 from .headless import Web_headless
-from .printing import print, log, Colors, Strings
+from .printing import print, log
 
 class Request():
     def __init__(self, url, data:str()="", headers: dict()={}, method="GET", parameter="", placeholder="§", place=["url"]):
@@ -113,9 +113,9 @@ class Requests():
 
     headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"}
 
-    def __init__(self, method="GET", timeout=60, throttle=0.0, allow_redirects=False, verify_ssl=False, retry=False, headers={}) -> None:
+    def __init__(self, method="GET", timeout=60, throttle=0.0, allow_redirects=False, verify_ssl=False, retry=False, headers={}, independant_chrome=False) -> None:
         self.session = requests.Session()
-        self.web = Web_headless(headers, timeout=timeout)
+        self.web = Web_headless(headers, timeout=timeout, redirects=allow_redirects, independant_chrome=independant_chrome)
         self.method = method
         self.timeout = timeout
         self.throttle = throttle

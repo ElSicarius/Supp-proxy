@@ -34,6 +34,7 @@ class Arguments():
         parser.add_argument("--throttle", help="throttle between the requests, default 0.0", default=0, type=int)
         parser.add_argument('-re', "--allow-redirects", default=False, action="store_true", help='Allow HTTP redirects')
 
+        parser.add_argument("--chrome-debug-port", dest="chrome_port",help='Specify the port of an exposed chrome remote debugging port (to use an already opened chrome instance)', default=None)
         parser.add_argument("--proxy-method", help='Get the payloads from an other tool via a loopback HTTP server with a specific method', default=None, choices=["GET", "POST"])
         parser.add_argument("--proxy-port", help='Get the payloads from an other tool via a loopback HTTP server with a specific port', default=8080, type=int)
 
@@ -48,7 +49,6 @@ class Arguments():
         parser.add_argument("-ut", "--untamper",help="Unprocess tampered payload to see what is the real payload unprocessed", default=False, action="store_true")
         parser.add_argument("-tf", "--time-filter",help='Specify the time range that we\'ll use to accept responses (format: >3000 or <3000 or =3000 or >=3000 or <=3000', action="append", default=[])
         parser.add_argument("-lf", "--length-filter",help='Specify the length range that we\'ll use to accept responses (format: >3000 or <3000 or =3000 or >=3000 or <=3000', action="append", default=[])
-        
         # base request stuff
         parser.add_argument("-B", "--use-base-request", help="Use the strategy to compare responses against a base request to reduce noise",action="store_true", default=False)
         parser.add_argument('-b', "--base-payload",help="Payload for base request", default="Fuzzing")

