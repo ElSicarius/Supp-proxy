@@ -113,9 +113,9 @@ class Requests():
 
     headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"}
 
-    def __init__(self, method="GET", timeout=60, throttle=0.0, allow_redirects=False, verify_ssl=False, retry=False, headers={}, independant_chrome=False) -> None:
+    def __init__(self, method="GET", timeout=60, throttle=0.0, allow_redirects=False, verify_ssl=False, retry=False, headers={}, independant_chrome=False, only_new_pages=False) -> None:
         self.session = requests.Session()
-        self.web = Web_headless(headers, timeout=timeout, redirects=allow_redirects, independant_chrome=independant_chrome)
+        self.web = Web_headless(headers, timeout=timeout, redirects=allow_redirects, independant_chrome=independant_chrome, only_new_pages=only_new_pages)
         self.method = method
         self.timeout = timeout
         self.throttle = throttle
@@ -182,7 +182,7 @@ class Requests():
         browser = await self.web.spawn_browser()
         page = await self.web.new_page(browser)
         req = await self.web.page_goto(page, url, headers=self.headers)
-        return req
+        return req, page
 
     def get_(self, url, data=None, headers={}):
         """

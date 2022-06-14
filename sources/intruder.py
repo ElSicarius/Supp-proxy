@@ -15,7 +15,8 @@ class Intruder():
                                 allow_redirects=args.allow_redirects, 
                                 verify_ssl=args.verify_ssl, 
                                 retry=args.retry,
-                                independant_chrome=args.chrome_port)
+                                independant_chrome=args.chrome_port,
+                                only_new_pages=args.only_new_pages,)
         self.futures = set()
         self.fill_statuscode_specs()
         self.fill_time_spent_specs()
@@ -180,7 +181,7 @@ class Intruder():
         tampered = self.wordlist.gen_payload(payload)
         base_payload, full_payload, response = await self.prepare_request_and_send_headless(tampered, payload)
        
-                
+        response, page = response
         if response is None:
             log(f"A problem occured while fetching the link, your internet might be broken. param: {base_payload}", type="critical")
             # Accept response
@@ -193,10 +194,12 @@ class Intruder():
                 identical = self.difflib.is_identical(self.base_request, response, base_payload, self.args.match_headers, self.args.exclude_headers)
                 if identical:
                     if not self.args.match_base_request:
+                        await page.close()
                         return False, response, base_payload, full_payload
                         
                 else:
                     if self.args.match_base_request:
+                        await page.close()
                         return False, response, base_payload, full_payload
                         
 
@@ -204,14 +207,17 @@ class Intruder():
         # FILTERS CHECKS
         if not self.is_status_code_in_specs(response.status_code):
             # reject response
+            await page.close()
             return False, response, base_payload, full_payload
             
         if not self.is_response_time_in_specs(response.elapsed.total_seconds()):
             # reject response
+            await page.close()
             return False, response, base_payload, full_payload
             
         if not self.is_response_len_specs(len(response.text)):
             # reject response
+            await page.close()
             return False, response, base_payload, full_payload
             
         return True, response, base_payload, full_payload

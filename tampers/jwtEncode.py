@@ -14,7 +14,7 @@ def process(payload):
 	payload = jwt.encode(\
 						# change the json according to your jwt setup
 						json.loads(json.dumps({
-						"username": payload,
+						"url": payload,
 						"pk": KEY,
 						"iat": 1651830405
 						})),\

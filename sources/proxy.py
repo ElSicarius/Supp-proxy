@@ -36,6 +36,7 @@ class Arguments():
 
         parser.add_argument("--chrome-debug-port", dest="chrome_port",help='Specify the port of an exposed chrome remote debugging port (to use an already opened chrome instance)', default=None)
         parser.add_argument("--proxy-method", help='Get the payloads from an other tool via a loopback HTTP server with a specific method', default=None, choices=["GET", "POST"])
+        parser.add_argument("--only-new-pages", help='Spawn a new page of the headless browser for each payload', default=False, action="store_true")
         parser.add_argument("--proxy-port", help='Get the payloads from an other tool via a loopback HTTP server with a specific port', default=8080, type=int)
 
         parser.add_argument("--prefix", help='Prefix for all elements of the wordlist',default=str())
